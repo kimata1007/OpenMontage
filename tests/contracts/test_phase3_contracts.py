@@ -34,6 +34,7 @@ from tools.tool_registry import ToolRegistry
 from tools.audio.elevenlabs_tts import ElevenLabsTTS
 from tools.audio.openai_tts import OpenAITTS
 from tools.audio.piper_tts import PiperTTS
+from tools.audio.voicevox_tts import VoicevoxTTS
 from tools.audio.tts_selector import TTSSelector
 from tools.audio.google_tts import GoogleTTS
 from tools.graphics.google_imagen import GoogleImagen
@@ -134,6 +135,37 @@ class TestPiperTTS:
         monkeypatch.setattr(builtins, "__import__", fake_import)
 
         assert PiperTTS().get_status() == ToolStatus.UNAVAILABLE
+
+
+class TestVoicevoxTTS:
+    def test_identity(self):
+        tool = VoicevoxTTS()
+        info = tool.get_info()
+        assert info["name"] == "voicevox_tts"
+        assert info["tier"] == "voice"
+        assert info["capability"] == "tts"
+        assert info["provider"] == "voicevox"
+
+    def test_cost_is_free(self):
+        tool = VoicevoxTTS()
+        assert tool.estimate_cost({"text": "anything"}) == 0.0
+
+    def test_capabilities(self):
+        tool = VoicevoxTTS()
+        assert "text_to_speech" in tool.capabilities
+        assert "japanese_narration" in tool.capabilities
+
+    def test_status_unavailable_when_engine_unreachable(self, monkeypatch):
+        """The engine is a local HTTP server (not a subprocess like Piper), so
+        get_status() must reflect a real connectivity check, not just import
+        success."""
+        import requests
+
+        def fake_get(url, timeout=None):
+            raise requests.ConnectionError("engine not running")
+
+        monkeypatch.setattr(requests, "get", fake_get)
+        assert VoicevoxTTS().get_status() == ToolStatus.UNAVAILABLE
 
 
 class TestGoogleTTS:
@@ -687,6 +719,7 @@ class TestCapabilityMetadata:
             "kling_official",
             "openai",
             "piper",
+            "voicevox",
         }
 
 
