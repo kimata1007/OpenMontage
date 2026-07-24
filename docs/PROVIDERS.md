@@ -768,6 +768,34 @@ piper --download-dir ~/.piper/models --model en_US-lessac-medium
 
 ---
 
+### VOICEVOX — Free Japanese TTS (Local Engine)
+
+> **Completely free, fully offline Japanese TTS.** Runs as a local HTTP server with many distinct character voices. Speaks Japanese only.
+
+**Tool:** `voicevox_tts`
+**Runtime:** CPU (no GPU needed)
+**Env vars:** None required. Optional `VOICEVOX_ENGINE_URL` (full URL override) or `VOICEVOX_PORT` (default `50021`) if the engine runs on a non-default host/port.
+
+#### Setup
+
+```bash
+# Download voicevox_engine from
+# https://github.com/VOICEVOX/voicevox_engine/releases
+# (macOS: the *-macos-arm64 or *-macos-x64 asset)
+
+# Extract it, then start the engine:
+./run --host 127.0.0.1 --port 50021
+
+# Confirm it's up:
+curl http://127.0.0.1:50021/version
+```
+
+**Available voices:** Dozens of named character speakers, each with multiple styles (e.g. ノーマル/あまあま/ツンツン). List them with `GET /speakers` on the running engine.
+
+**Quality:** Natural, expressive Japanese narration with recognizable character voices — a strong default for Japanese-language explainer/narration work. Not usable for other languages; pair with Google TTS or ElevenLabs for multilingual projects.
+
+---
+
 ### Local Video Generation (GPU Required)
 
 > **Free AI video generation.** Requires an NVIDIA GPU with sufficient VRAM.
@@ -879,6 +907,7 @@ These tools require only FFmpeg or Python packages — no GPU, no API key.
 | **Pexels** | `PEXELS_API_KEY` | `pexels_image`, `pexels_video` | Free |
 | **Pixabay** | `PIXABAY_API_KEY` | `pixabay_image`, `pixabay_video` | Free |
 | **Piper** | — (install only) | `piper_tts` | Free |
+| **VOICEVOX** | — (local engine, install only) | `voicevox_tts` | Free |
 | **Google** | `GOOGLE_API_KEY` (or `GEMINI_API_KEY`) | `google_tts`, `google_imagen`, `google_music`, `gemini_omni_video`, `veo_video` | Free tier (TTS) + paid |
 | **ElevenLabs** | `ELEVENLABS_API_KEY` | `elevenlabs_tts`, `music_gen` | Free tier + paid |
 | **fal.ai** | `FAL_KEY` | `flux_image`, `recraft_image`, `kling_video`, `veo_video`, `minimax_video` | Pay-as-you-go |
@@ -903,7 +932,7 @@ How many providers cover each capability:
 |-----------|----------------|-----------------|--------------|
 | **Image Generation** | FLUX, Kling Official, Grok, Google Imagen, GPT Image 2, Recraft | Local Diffusion | Pexels, Pixabay (stock) |
 | **Video Generation** | Grok, Kling Official, Kling via fal.ai, Runway, Veo, Gemini Omni, Higgsfield, MiniMax, HeyGen | WAN, Hunyuan, CogVideo, LTX | Pexels, Pixabay (stock) |
-| **Text-to-Speech** | ElevenLabs, Google TTS, Kling Official, OpenAI | Piper | Piper, Google free tier, ElevenLabs free tier |
+| **Text-to-Speech** | ElevenLabs, Google TTS, Kling Official, OpenAI | Piper, VOICEVOX (Japanese) | Piper, VOICEVOX, Google free tier, ElevenLabs free tier |
 | **Music Generation** | ElevenLabs, Suno, Google Lyria | — | ElevenLabs free tier |
 | **Post-Production** | — | FFmpeg (compose, stitch, trim, mix, enhance, grade) | All free |
 | **Analysis** | — | WhisperX, Scene Detect, Frame Sampler, CLIP/BLIP-2 | All free |
